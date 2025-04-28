@@ -26,9 +26,6 @@ RUN if [ "$SERVER_TYPE" = "nginx" ]; then \
       echo "<h1>$CUSTOM_MESSAGE</h1><p>Server: $SERVER_TYPE</p><p>Environment: $ENVIRONMENT</p>" > /var/www/localhost/htdocs/index.html; \
     fi
 
-# Copy custom nginx config
-COPY default.conf /etc/nginx/conf.d/default.conf
-
 EXPOSE 80
 
 CMD if [ "$SERVER_TYPE" = "nginx" ]; then \
