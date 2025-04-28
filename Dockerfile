@@ -1,14 +1,22 @@
 FROM alpine:latest
 
-# Declare build arguments
 ARG SERVER_TYPE
 ARG CUSTOM_MESSAGE
 ARG ENVIRONMENT
 
-# Use build arguments
-RUN echo "Server type is $SERVER_TYPE" > /server-info.txt && \
-    echo "Custom message is $CUSTOM_MESSAGE" >> /server-info.txt && \
-    echo "Environment is $ENVIRONMENT" >> /server-info.txt
+# Install Apache
+RUN apk add --no-cache apache2
 
-# Just for test
-CMD ["cat", "/server-info.txt"]
+# Create a custom index.html using the build arguments
+RUN mkdir -p /var/www/localhost/htdocs && \
+    echo "<html><body>" > /var/www/localhost/htdocs/index.html && \
+    echo "<h1>$CUSTOM_MESSAGE</h1>" >> /var/www/localhost/htdocs/index.html && \
+    echo "<p>Server: $SERVER_TYPE</p>" >> /var/www/localhost/htdocs/index.html && \
+    echo "<p>Environment: $ENVIRONMENT</p>" >> /var/www/localhost/htdocs/index.html && \
+    echo "</body></html>" >> /var/www/localhost/htdocs/index.html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Apache in foreground
+CMD ["httpd", "-D", "FOREGROUND"]
